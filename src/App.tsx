@@ -29,7 +29,7 @@ import { CLINIC_DETAILS, SERVICES, REVIEWS, GALLERY_IMAGES } from './constants';
 
 // --- Components ---
 
-const Navbar = ({ activePage, setActivePage }: { activePage: string, setActivePage: (p: string) => void }) => {
+const Navbar = ({ activePage, setActivePage, openModal }: { activePage: string, setActivePage: (p: string) => void, openModal: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -81,7 +81,7 @@ const Navbar = ({ activePage, setActivePage }: { activePage: string, setActivePa
             </button>
           ))}
           <button 
-            onClick={() => setActivePage('contact')}
+            onClick={openModal}
             className="bg-medical-blue text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200"
           >
             Book Appointment
@@ -123,7 +123,7 @@ const Navbar = ({ activePage, setActivePage }: { activePage: string, setActivePa
               <div className="pt-4">
                 <button 
                   onClick={() => {
-                    setActivePage('contact');
+                    openModal();
                     setIsOpen(false);
                   }}
                   className="w-full bg-medical-blue text-white py-3 rounded-xl font-bold"
@@ -237,10 +237,10 @@ const WhatsAppButton = () => (
   </a>
 );
 
-const StickyCTA = ({ setActivePage }: { setActivePage: (p: string) => void }) => (
+const StickyCTA = ({ openModal }: { openModal: () => void }) => (
   <div className="fixed bottom-6 left-6 z-50 hidden sm:block">
     <button
-      onClick={() => setActivePage('contact')}
+      onClick={openModal}
       className="bg-medical-blue text-white px-6 py-3 rounded-full shadow-2xl hover:bg-blue-700 transition-all flex items-center font-bold"
     >
       <Calendar size={20} className="mr-2" />
@@ -248,6 +248,140 @@ const StickyCTA = ({ setActivePage }: { setActivePage: (p: string) => void }) =>
     </button>
   </div>
 );
+
+const BookingModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+  const [formState, setFormState] = useState({
+    name: '',
+    phone: '+91 ',
+    date: '',
+    time: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+    setTimeout(() => {
+      setSubmitted(false);
+      onClose();
+    }, 3000);
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"
+          />
+          
+          {/* Modal Content */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="relative w-full max-w-md bg-white rounded-[2rem] shadow-2xl overflow-hidden"
+          >
+            {/* Header with Gradient */}
+            <div className="bg-gradient-to-r from-medical-blue to-blue-400 p-8 text-white">
+              <button 
+                onClick={onClose}
+                className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors"
+              >
+                <X size={24} />
+              </button>
+              <h2 className="text-2xl font-bold mb-1">Book Appointment</h2>
+              <p className="text-blue-50 text-sm font-medium">Indravati Clinic – Caring for You Always</p>
+            </div>
+
+            <div className="p-8">
+              {submitted ? (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <ThumbsUp className="text-green-600" />
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">Request Received!</h4>
+                  <p className="text-gray-600">We will contact you shortly.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1">Full Name</label>
+                    <input 
+                      type="text" 
+                      required
+                      placeholder="Enter your name"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-blue transition-all"
+                      value={formState.name}
+                      onChange={(e) => setFormState({...formState, name: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1">Phone Number</label>
+                    <input 
+                      type="tel" 
+                      required
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-blue transition-all"
+                      value={formState.phone}
+                      onChange={(e) => setFormState({...formState, phone: e.target.value})}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1">Select Date</label>
+                      <input 
+                        type="date" 
+                        required
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-blue transition-all text-sm"
+                        value={formState.date}
+                        onChange={(e) => setFormState({...formState, date: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1">Select Time</label>
+                      <select 
+                        required
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-blue transition-all text-sm"
+                        value={formState.time}
+                        onChange={(e) => setFormState({...formState, time: e.target.value})}
+                      >
+                        <option value="">Time Slot</option>
+                        <option value="morning">Morning</option>
+                        <option value="evening">Evening</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button 
+                    type="submit"
+                    className="w-full bg-medical-blue text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 mt-4"
+                  >
+                    Submit
+                  </button>
+                </form>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 // --- Pages ---
 
@@ -900,11 +1034,24 @@ const ContactPage = () => {
 
 export default function App() {
   const [activePage, setActivePage] = useState('home');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Scroll to top on page change
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [activePage]);
+
+  // Auto-popup logic
+  useEffect(() => {
+    const hasShownPopup = sessionStorage.getItem('hasShownPopup');
+    if (!hasShownPopup) {
+      const timer = setTimeout(() => {
+        setIsModalOpen(true);
+        sessionStorage.setItem('hasShownPopup', 'true');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const renderPage = () => {
     switch (activePage) {
@@ -920,7 +1067,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar activePage={activePage} setActivePage={setActivePage} />
+      <Navbar activePage={activePage} setActivePage={setActivePage} openModal={() => setIsModalOpen(true)} />
       
       <main className="flex-grow">
         <AnimatePresence mode="wait">
@@ -938,7 +1085,8 @@ export default function App() {
 
       <Footer setActivePage={setActivePage} />
       <WhatsAppButton />
-      <StickyCTA setActivePage={setActivePage} />
+      <StickyCTA openModal={() => setIsModalOpen(true)} />
+      <BookingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }

@@ -49,17 +49,17 @@ const Navbar = ({ activePage, setActivePage, openModal }: { activePage: string, 
   ];
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'glass-nav py-3' : 'bg-transparent py-5'}`}>
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 glass-nav ${scrolled ? 'py-2' : 'py-4'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
         <div className="flex items-center cursor-pointer" onClick={() => setActivePage('home')}>
-          <div className="bg-medical-blue p-2 rounded-lg mr-3">
+          <div className="bg-medical-blue p-2 rounded-lg mr-3 shadow-md shadow-blue-100">
             <Stethoscope className="text-white w-6 h-6" />
           </div>
           <div>
-            <h1 className={`text-xl font-bold leading-none ${scrolled ? 'text-medical-blue' : 'text-white'}`}>
+            <h1 className="text-xl font-bold leading-none text-gray-900">
               {CLINIC_DETAILS.name}
             </h1>
-            <p className={`text-[10px] font-medium ${scrolled ? 'text-gray-500' : 'text-white/80'}`}>
+            <p className="text-[10px] font-bold text-medical-blue uppercase tracking-wider">
               {CLINIC_DETAILS.nameHindi}
             </p>
           </div>
@@ -71,18 +71,24 @@ const Navbar = ({ activePage, setActivePage, openModal }: { activePage: string, 
             <button
               key={link.id}
               onClick={() => setActivePage(link.id)}
-              className={`text-sm font-medium transition-colors hover:text-medical-blue ${
+              className={`text-sm transition-all duration-300 hover:text-medical-teal relative py-1 ${
                 activePage === link.id 
-                  ? 'text-medical-blue' 
-                  : scrolled ? 'text-gray-700' : 'text-white'
+                  ? 'text-medical-teal font-bold' 
+                  : 'text-gray-600 font-medium'
               }`}
             >
               {link.label}
+              {activePage === link.id && (
+                <motion.div 
+                  layoutId="nav-underline"
+                  className="absolute bottom-0 left-0 w-full h-0.5 bg-medical-teal rounded-full"
+                />
+              )}
             </button>
           ))}
           <button 
             onClick={openModal}
-            className="bg-medical-blue text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200"
+            className="bg-medical-blue text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 hover:shadow-blue-200 active:scale-95"
           >
             Book Appointment
           </button>
@@ -90,7 +96,7 @@ const Navbar = ({ activePage, setActivePage, openModal }: { activePage: string, 
 
         {/* Mobile Menu Button */}
         <div className="md:hidden">
-          <button onClick={() => setIsOpen(!isOpen)} className={scrolled ? 'text-gray-900' : 'text-white'}>
+          <button onClick={() => setIsOpen(!isOpen)} className="text-gray-900 p-2 hover:bg-gray-100 rounded-lg transition-colors">
             {isOpen ? <X /> : <Menu />}
           </button>
         </div>

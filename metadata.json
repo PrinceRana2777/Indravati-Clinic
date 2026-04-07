@@ -1,0 +1,7 @@
+{
+  "name": "Indravati Clinic",
+  "description": "Indravati Clinic (इंद्रावती क्लिनिक) - Professional medical care by Dr. O.P. Yadav. Providing trusted treatment and patient satisfaction in Naigaon East.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

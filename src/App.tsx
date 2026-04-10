@@ -25,7 +25,7 @@ import {
   ThumbsUp,
   ArrowRight
 } from 'lucide-react';
-import { CLINIC_DETAILS, SERVICES, REVIEWS, GALLERY_IMAGES } from './constants';
+import { CLINIC_DETAILS, SERVICES, REVIEWS } from './constants';
 
 // --- Components ---
 
@@ -44,7 +44,6 @@ const Navbar = ({ activePage, setActivePage, openModal }: { activePage: string, 
     { id: 'about', label: 'About' },
     { id: 'doctor', label: 'Doctor' },
     { id: 'services', label: 'Services' },
-    { id: 'gallery', label: 'Gallery' },
     { id: 'contact', label: 'Contact' },
   ];
 
@@ -172,7 +171,7 @@ const Footer = ({ setActivePage }: { setActivePage: (p: string) => void }) => (
         <div>
           <h3 className="text-lg font-bold mb-6">Quick Links</h3>
           <ul className="space-y-4 text-gray-400 text-sm">
-            {['Home', 'About', 'Doctor', 'Services', 'Gallery', 'Contact'].map((item) => (
+            {['Home', 'About', 'Doctor', 'Services', 'Contact'].map((item) => (
               <li key={item}>
                 <button 
                   onClick={() => setActivePage(item.toLowerCase())}
@@ -277,6 +276,13 @@ const BookingModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => voi
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Create WhatsApp message
+    const message = `Hello Indravati Clinic, I would like to book an appointment.%0A%0A*Details:*%0A- Name: ${formState.name}%0A- Phone: ${formState.phone}%0A- Date: ${formState.date}%0A- Time: ${formState.time}`;
+    const whatsappUrl = `https://wa.me/${CLINIC_DETAILS.whatsapp}?text=${message}`;
+    
+    window.open(whatsappUrl, '_blank');
+    
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
@@ -368,8 +374,8 @@ const BookingModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => voi
                         onChange={(e) => setFormState({...formState, time: e.target.value})}
                       >
                         <option value="">Time Slot</option>
-                        <option value="morning">Morning</option>
-                        <option value="evening">Evening</option>
+                        <option value="morning">Morning (10:00 AM - 1:30 PM)</option>
+                        <option value="evening">Evening (6:00 PM - 10:30 PM)</option>
                       </select>
                     </div>
                   </div>
@@ -638,14 +644,15 @@ const AboutPage = () => {
         </div>
 
         {/* Timeline */}
-        <div className="py-24 bg-gray-50 rounded-[3rem] px-8">
+        <div className="py-24 bg-gray-50 rounded-[3rem] px-4 md:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold">Our Journey</h2>
             <p className="text-gray-500 mt-2">Milestones that define our commitment</p>
           </div>
 
           <div className="relative max-w-4xl mx-auto">
-            <div className="absolute left-1/2 -translate-x-1/2 w-1 h-full bg-blue-200 rounded-full"></div>
+            {/* Vertical Line - Hidden on small mobile, visible on md+ */}
+            <div className="absolute left-4 md:left-1/2 md:-translate-x-1/2 w-1 h-full bg-blue-200 rounded-full"></div>
             
             {[
               { year: "2008", title: "The Beginning", desc: "Dr. O.P. Yadav started his medical practice with a small clinic." },
@@ -653,16 +660,17 @@ const AboutPage = () => {
               { year: "2018", title: "Modernization", desc: "Integrated advanced diagnostic tools and emergency care." },
               { year: "2024", title: "Digital Era", desc: "Launched online appointment booking and digital records." }
             ].map((item, i) => (
-              <div key={i} className={`relative flex items-center mb-16 ${i % 2 === 0 ? 'flex-row-reverse' : ''}`}>
-                <div className="w-1/2 px-8">
-                  <div className={`p-6 bg-white rounded-2xl shadow-sm border border-gray-100 ${i % 2 === 0 ? 'text-right' : ''}`}>
+              <div key={i} className={`relative flex items-center mb-12 md:mb-16 pl-12 md:pl-0 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                <div className="w-full md:w-1/2 md:px-8">
+                  <div className={`p-6 bg-white rounded-2xl shadow-sm border border-gray-100 ${i % 2 === 0 ? 'md:text-right' : ''}`}>
                     <span className="text-medical-blue font-bold text-xl">{item.year}</span>
                     <h3 className="text-lg font-bold mt-1 mb-2">{item.title}</h3>
                     <p className="text-gray-600 text-sm">{item.desc}</p>
                   </div>
                 </div>
-                <div className="absolute left-1/2 -translate-x-1/2 w-6 h-6 bg-medical-blue rounded-full border-4 border-white shadow-md z-10"></div>
-                <div className="w-1/2"></div>
+                {/* Dot */}
+                <div className="absolute left-1.5 md:left-1/2 md:-translate-x-1/2 w-6 h-6 bg-medical-blue rounded-full border-4 border-white shadow-md z-10"></div>
+                <div className="hidden md:block md:w-1/2"></div>
               </div>
             ))}
           </div>
@@ -685,7 +693,7 @@ const DoctorPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="relative h-[500px] lg:h-auto overflow-hidden group">
               <img 
-                src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=800" 
+                src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=800" 
                 alt="Dr. O.P. Yadav" 
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 referrerPolicy="no-referrer"
@@ -719,7 +727,7 @@ const DoctorPage = () => {
                   </div>
                   <div>
                     <h4 className="font-bold">Specializations</h4>
-                    <p className="text-gray-600 text-sm">General Medicine, Emergency Care, Chronic Diseases</p>
+                    <p className="text-gray-600 text-sm">General Medicine, Chronic Diseases, Emergency Medical Services</p>
                   </div>
                 </div>
                 <div className="flex items-center">
@@ -812,9 +820,12 @@ const ServicesPage = () => {
                 <div className="flex items-center p-6 bg-gray-50 rounded-2xl border border-gray-100">
                   <div className="mr-8">
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Consultation Fee</p>
-                    <p className="text-2xl font-bold text-medical-blue">{activeService.price}</p>
+                    <p className="text-2xl font-bold text-medical-blue">{CLINIC_DETAILS.consultationFee}</p>
                   </div>
-                  <button className="bg-medical-blue text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all ml-auto">
+                  <button 
+                    onClick={() => setActiveTab(SERVICES[0].id)}
+                    className="bg-medical-blue text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all ml-auto"
+                  >
                     Book Now
                   </button>
                 </div>
@@ -894,6 +905,13 @@ const ContactPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Create WhatsApp message
+    const message = `Hello Indravati Clinic, I would like to book an appointment.%0A%0A*Details:*%0A- Name: ${formState.name}%0A- Phone: ${formState.phone}%0A- Date: ${formState.date}%0A- Time: ${formState.time}%0A- Message: ${formState.message}`;
+    const whatsappUrl = `https://wa.me/${CLINIC_DETAILS.whatsapp}?text=${message}`;
+    
+    window.open(whatsappUrl, '_blank');
+    
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 5000);
   };
@@ -911,7 +929,7 @@ const ContactPage = () => {
           <div className="space-y-8">
             <div className="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-gray-100 h-[400px]">
               <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.662489115664!2d72.8465!3d19.34!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7a96999999999%3A0x9999999999999999!2sNaigaon%20East!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin" 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.662489115664!2d72.8465!3d19.34!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7a96999999999%3A0x9999999999999999!2sIndravati%20Clinic%20Naigaon%20East!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin" 
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 
@@ -1005,7 +1023,7 @@ const ContactPage = () => {
                     >
                       <option value="">Select Time</option>
                       <option value="morning">Morning (10:00 AM - 1:30 PM)</option>
-                      <option value="evening">Evening (5:30 PM - 10:30 PM)</option>
+                      <option value="evening">Evening (6:00 PM - 10:30 PM)</option>
                     </select>
                   </div>
                 </div>
@@ -1065,7 +1083,6 @@ export default function App() {
       case 'about': return <AboutPage />;
       case 'doctor': return <DoctorPage />;
       case 'services': return <ServicesPage />;
-      case 'gallery': return <GalleryPage />;
       case 'contact': return <ContactPage />;
       default: return <HomePage setActivePage={setActivePage} />;
     }

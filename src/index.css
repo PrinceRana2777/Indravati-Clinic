@@ -23,21 +23,3 @@
 .glass-nav {
   @apply bg-white/90 backdrop-blur-lg border-b border-gray-100 shadow-sm;
 }
-
-.masonry-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-auto-rows: 10px;
-}
-
-.masonry-item {
-  grid-row-end: span 20;
-}
-
-.masonry-item:nth-child(2n) {
-  grid-row-end: span 30;
-}
-
-.masonry-item:nth-child(3n) {
-  grid-row-end: span 25;
-}

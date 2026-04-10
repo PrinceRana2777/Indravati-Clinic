@@ -6,7 +6,7 @@ export const CLINIC_DETAILS = {
   regNo: "I-70901-A",
   phone: "+91 90294 03531",
   email: "dromprakash1986@gmail.com",
-  address: "D2/8, Kini Apartment, Near Seven Square School, Naigaon East, Palghar, Maharashtra – 401208",
+  address: "D2/8, Kini, Indravati Clinic, Seven Square Academy School",
   timings: {
     morning: "10:00 AM – 1:30 PM",
     evening: "6:00 PM – 10:30 PM"

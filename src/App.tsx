@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Phone, 
@@ -693,7 +693,7 @@ const DoctorPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="relative h-[500px] lg:h-auto overflow-hidden group">
               <img 
-                src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=800" 
+                src="https://iili.io/BGXaQ5l.md.png" 
                 alt="Dr. O.P. Yadav" 
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 referrerPolicy="no-referrer"
@@ -857,40 +857,7 @@ const ServicesPage = () => {
 };
 
 const GalleryPage = () => {
-  return (
-    <div className="pt-24 pb-24">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Clinic Gallery</h2>
-          <p className="text-gray-500">A glimpse into our professional environment</p>
-        </div>
-
-        <div className="masonry-grid gap-6">
-          {GALLERY_IMAGES.map((img, i) => (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="masonry-item relative overflow-hidden rounded-3xl group cursor-pointer"
-            >
-              <img 
-                src={img} 
-                alt={`Gallery ${i}`} 
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-medical-blue/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <div className="bg-white p-4 rounded-full scale-0 group-hover:scale-100 transition-transform duration-500">
-                  <ChevronRight className="text-medical-blue" />
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  return null;
 };
 
 const ContactPage = () => {
@@ -927,9 +894,9 @@ const ContactPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Map & Info */}
           <div className="space-y-8">
-            <div className="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-gray-100 h-[400px]">
+            <div className="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-gray-100 h-[350px]">
               <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.662489115664!2d72.8465!3d19.34!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7a96999999999%3A0x9999999999999999!2sIndravati%20Clinic%20Naigaon%20East!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin" 
+                src="https://www.google.com/maps?q=D2/8, Kini, Indravati Clinic, Seven Square Academy School&output=embed"
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 

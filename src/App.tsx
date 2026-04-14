@@ -227,19 +227,34 @@ const Footer = ({ setActivePage }: { setActivePage: (p: string) => void }) => (
   </footer>
 );
 
-const WhatsAppButton = () => (
-  <a
-    href={`https://wa.me/${CLINIC_DETAILS.whatsapp}`}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center group"
-    aria-label="Chat on WhatsApp"
-  >
-    <MessageCircle size={28} fill="currentColor" />
-    <span className="absolute right-full mr-3 bg-white text-gray-800 px-3 py-1 rounded-lg text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity shadow-lg whitespace-nowrap pointer-events-none">
-      Chat with us
-    </span>
-  </a>
+const FloatingContactWidget = () => (
+  <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+    {/* WhatsApp Button */}
+    <a
+      href={`https://wa.me/${CLINIC_DETAILS.whatsapp}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center group relative"
+      aria-label="Chat on WhatsApp"
+    >
+      <MessageCircle size={28} fill="currentColor" />
+      <span className="absolute right-full mr-3 bg-white text-gray-800 px-3 py-1 rounded-lg text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity shadow-lg whitespace-nowrap pointer-events-none">
+        Chat with us
+      </span>
+    </a>
+
+    {/* Call Button */}
+    <a
+      href={`tel:${CLINIC_DETAILS.phone}`}
+      className="bg-medical-blue text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center group relative"
+      aria-label="Call Clinic"
+    >
+      <Phone size={28} fill="currentColor" />
+      <span className="absolute right-full mr-3 bg-white text-gray-800 px-3 py-1 rounded-lg text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity shadow-lg whitespace-nowrap pointer-events-none">
+        Call Now
+      </span>
+    </a>
+  </div>
 );
 
 const StickyCTA = ({ openModal }: { openModal: () => void }) => (
@@ -492,7 +507,11 @@ const HomePage = ({ setActivePage }: { setActivePage: (p: string) => void }) => 
                   <div className="w-14 h-14 bg-medical-light rounded-2xl flex items-center justify-center mb-6 group-hover:bg-medical-blue transition-colors">
                     <Icon className="text-medical-blue group-hover:text-white transition-colors" />
                   </div>
-                  <h3 className="text-xl font-bold mb-4">{service.title}</h3>
+                  <h3 className="text-xl font-bold mb-2">{service.title}</h3>
+                  <div className="flex items-center text-[10px] font-bold text-medical-teal uppercase tracking-wider mb-4">
+                    <Clock size={12} className="mr-1" />
+                    Mon - Sat | 10:00 AM - 10:30 PM
+                  </div>
                   <p className="text-gray-600 text-sm mb-6 leading-relaxed">
                     {service.description}
                   </p>
@@ -592,7 +611,57 @@ const HomePage = ({ setActivePage }: { setActivePage: (p: string) => void }) => 
   );
 };
 
+const ImageSlider = ({ images }: { images: string[] }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [images.length]);
+
+  return (
+    <div className="relative w-full h-full group">
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={currentIndex}
+          src={images[currentIndex]}
+          initial={{ opacity: 0, scale: 1.1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+          className="absolute inset-0 w-full h-full object-cover object-[50%_60%] display-block"
+          referrerPolicy="no-referrer"
+        />
+      </AnimatePresence>
+      
+      {/* Navigation Dots */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+        {images.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentIndex(i)}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              i === currentIndex ? 'bg-white w-6' : 'bg-white/50'
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Overlay Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+    </div>
+  );
+};
+
 const AboutPage = () => {
+  const clinicImages = [
+    "https://iili.io/BOx18aS.md.jpg",
+    "https://iili.io/BOx1e6l.md.jpg",
+    "https://iili.io/BOx1vF2.md.jpg"
+  ];
+
   return (
     <div className="pt-24 pb-24">
       <div className="max-w-7xl mx-auto px-4">
@@ -602,14 +671,15 @@ const AboutPage = () => {
             animate={{ opacity: 1, x: 0 }}
             className="relative"
           >
-            <img 
-              src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800" 
-              alt="Clinic Journey" 
-              className="rounded-3xl shadow-2xl relative z-10 w-full"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute -top-10 -left-10 w-full h-full border-4 border-medical-blue rounded-3xl -z-0 hidden md:block"></div>
-            <div className="absolute -bottom-10 right-10 bg-white p-8 rounded-2xl shadow-xl z-20 max-w-xs hidden md:block">
+            {/* Image Container with Border and Overflow Hidden */}
+            <div className="relative z-10 w-full aspect-[4/3] overflow-hidden rounded-[30px] border-4 border-medical-blue shadow-2xl bg-gray-50 p-0">
+              <ImageSlider images={clinicImages} />
+            </div>
+            
+            {/* Decorative Background Element */}
+            <div className="absolute -top-6 -left-6 w-full h-full border-2 border-medical-blue/10 rounded-[30px] -z-10 hidden md:block"></div>
+            
+            <div className="absolute -bottom-10 right-10 bg-white p-8 rounded-2xl shadow-xl z-20 max-w-xs hidden md:block border border-gray-100">
               <p className="text-gray-600 italic font-medium">
                 "Our mission is to provide accessible, high-quality healthcare to every individual in our community."
               </p>
@@ -682,72 +752,154 @@ const AboutPage = () => {
 
 const DoctorPage = () => {
   return (
-    <div className="pt-24 pb-24">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="pt-24 pb-24 bg-gradient-to-b from-white to-medical-light/30 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-medical-blue/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-96 h-96 bg-medical-teal/5 rounded-full blur-3xl" />
+
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Meet Our Expert</h2>
-          <p className="text-gray-500">Dedicated to providing the best medical care</p>
+          <motion.span 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-medical-blue font-bold tracking-widest uppercase text-xs mb-3 block"
+          >
+            Expert Care
+          </motion.span>
+          <motion.h2 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-5xl font-bold mb-4 text-gray-900"
+          >
+            Meet Our Expert
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-gray-500 max-w-2xl mx-auto"
+          >
+            Dedicated to providing the best medical care with a focus on holistic healing and modern emergency expertise.
+          </motion.p>
         </div>
 
-        <div className="max-w-5xl mx-auto bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-gray-100">
-          <div className="grid grid-cols-1 lg:grid-cols-2">
-            <div className="relative h-[500px] lg:h-auto overflow-hidden group">
-              <img 
-                src="https://iili.io/BGXaQ5l.md.png" 
-                alt="Dr. O.P. Yadav" 
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-medical-blue/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-12">
-                <div className="text-white">
-                  <p className="text-sm font-medium mb-1">Registration No.</p>
-                  <p className="text-xl font-bold">{CLINIC_DETAILS.regNo}</p>
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            {/* Left Column: Image & Basic Info */}
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="lg:col-span-5 space-y-6"
+            >
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-medical-blue/5 rounded-[3rem] blur-2xl group-hover:bg-medical-blue/10 transition-colors duration-500" />
+                <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white">
+                  <img 
+                    src="https://iili.io/BGXaQ5l.md.png" 
+                    alt="Dr. O.P. Yadav" 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/60 to-transparent text-white">
+                    <p className="text-sm font-medium opacity-80 mb-1 uppercase tracking-wider">Registration No.</p>
+                    <p className="text-xl font-bold">{CLINIC_DETAILS.regNo}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="p-12 lg:p-16 flex flex-col justify-center">
-              <span className="text-medical-blue font-bold tracking-widest uppercase text-sm mb-4">Chief Medical Officer</span>
-              <h2 className="text-4xl font-bold text-gray-900 mb-2">{CLINIC_DETAILS.doctorName}</h2>
-              <p className="text-lg text-gray-500 font-medium mb-8">{CLINIC_DETAILS.qualification}</p>
-              
-              <div className="space-y-6 mb-10">
-                <div className="flex items-center">
-                  <div className="bg-blue-50 p-3 rounded-xl mr-4">
+
+              <div className="bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-medical-light rounded-2xl flex items-center justify-center mr-4">
                     <Award className="text-medical-blue w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-bold">Experience</h4>
-                    <p className="text-gray-600 text-sm">15+ Years in Clinical Practice</p>
+                    <h4 className="font-bold text-gray-900">Chief Medical Officer</h4>
+                    <p className="text-sm text-gray-500">Indravati Clinic</p>
                   </div>
                 </div>
-                <div className="flex items-center">
-                  <div className="bg-blue-50 p-3 rounded-xl mr-4">
-                    <Stethoscope className="text-medical-blue w-6 h-6" />
+                <div className="space-y-3">
+                  <div className="flex justify-between items-start text-sm py-3 border-b border-gray-50">
+                    <span className="text-gray-500">Availability</span>
+                    <div className="text-right">
+                      <span className="font-bold text-medical-teal block">Mon - Sat</span>
+                      <span className="text-[10px] text-gray-400 font-medium">
+                        {CLINIC_DETAILS.timings.morning} & {CLINIC_DETAILS.timings.evening}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-bold">Specializations</h4>
-                    <p className="text-gray-600 text-sm">General Medicine, Chronic Diseases, Emergency Medical Services</p>
+                  <div className="flex justify-between text-sm py-2 border-b border-gray-50">
+                    <span className="text-gray-500">Consultation</span>
+                    <span className="font-bold text-medical-blue">{CLINIC_DETAILS.consultationFee}</span>
                   </div>
                 </div>
-                <div className="flex items-center">
-                  <div className="bg-blue-50 p-3 rounded-xl mr-4">
-                    <MapPin className="text-medical-blue w-6 h-6" />
+              </div>
+            </motion.div>
+
+            {/* Right Column: Detailed Info */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="lg:col-span-7 space-y-8"
+            >
+              <div>
+                <h2 className="text-5xl font-bold text-gray-900 mb-2">{CLINIC_DETAILS.doctorName}</h2>
+                <p className="text-xl text-medical-blue font-medium mb-6">{CLINIC_DETAILS.qualification}</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { icon: Award, title: "Experience", desc: "15+ Years in Clinical Practice", color: "blue" },
+                    { icon: Stethoscope, title: "Specializations", desc: "General Medicine, Chronic Diseases, EMS", color: "teal" },
+                    { icon: MapPin, title: "Education", desc: "Mumbai University & Hinduja Hospital", color: "blue" },
+                    { icon: ShieldCheck, title: "Certified", desc: "B.A.M.S & P.G.D.E.M.S Registered", color: "teal" }
+                  ].map((item, i) => (
+                    <div key={i} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-colors ${item.color === 'blue' ? 'bg-blue-50 text-medical-blue group-hover:bg-medical-blue group-hover:text-white' : 'bg-teal-50 text-medical-teal group-hover:bg-medical-teal group-hover:text-white'}`}>
+                        <item.icon size={20} />
+                      </div>
+                      <h4 className="font-bold text-gray-900 mb-1">{item.title}</h4>
+                      <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="absolute -left-4 top-0 bottom-0 w-1 bg-medical-blue/20 rounded-full" />
+                <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-4 opacity-5">
+                    <MessageCircle size={120} />
                   </div>
-                  <div>
-                    <h4 className="font-bold">Education</h4>
-                    <p className="text-gray-600 text-sm">Mumbai University & Hinduja Hospital</p>
+                  <h4 className="font-bold text-xl mb-4 flex items-center">
+                    <span className="w-8 h-8 bg-medical-blue text-white rounded-lg flex items-center justify-center mr-3 text-xs">"</span>
+                    Philosophy of Care
+                  </h4>
+                  <p className="text-gray-600 text-lg italic leading-relaxed relative z-10">
+                    "I believe in treating the person, not just the disease. My approach combines the best of traditional Ayurvedic wisdom with modern emergency medical skills to provide truly holistic healthcare."
+                  </p>
+                  <div className="mt-6 flex items-center">
+                    <div className="w-10 h-10 rounded-full bg-medical-light flex items-center justify-center text-medical-blue font-bold text-xs">OY</div>
+                    <div className="ml-3">
+                      <p className="font-bold text-sm text-gray-900">{CLINIC_DETAILS.doctorName}</p>
+                      <p className="text-xs text-gray-500">Chief Medical Officer</p>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
-                <h4 className="font-bold mb-3">Philosophy</h4>
-                <p className="text-gray-600 text-sm italic">
-                  "I believe in treating the person, not just the disease. My approach combines the best of traditional Ayurvedic wisdom with modern emergency medical skills."
-                </p>
+              <div className="flex flex-wrap gap-4">
+                <button className="bg-medical-blue text-white px-8 py-4 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center">
+                  <Calendar size={20} className="mr-2" />
+                  Book Consultation
+                </button>
+                <button className="bg-white text-gray-700 border border-gray-200 px-8 py-4 rounded-2xl font-bold hover:bg-gray-50 transition-all flex items-center">
+                  <Phone size={20} className="mr-2" />
+                  Contact Clinic
+                </button>
               </div>
-            </div>
+            </motion.div>
+
           </div>
         </div>
       </div>
@@ -838,13 +990,18 @@ const ServicesPage = () => {
                   className="rounded-[2.5rem] shadow-2xl w-full"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl flex items-center border border-gray-100">
-                  <div className="bg-blue-100 p-2 rounded-lg mr-4">
-                    <Clock className="text-medical-blue" />
+                <div className="absolute -bottom-10 -left-6 bg-white p-6 rounded-3xl shadow-2xl flex items-center border border-gray-100 z-20 min-w-[300px] max-w-[90%] md:max-w-md">
+                  <div className="bg-medical-light p-3 rounded-2xl mr-4 shrink-0">
+                    <Clock className="text-medical-blue w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-gray-400 uppercase">Available</p>
-                    <p className="text-sm font-bold">Mon - Sat</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-1">Service Availability</p>
+                    <p className="text-sm font-bold text-gray-900 leading-relaxed">
+                      Mon – Sat <span className="text-gray-300 mx-2">|</span> 
+                      <span className="text-medical-blue">{CLINIC_DETAILS.timings.morning}</span>
+                      <span className="mx-1 text-gray-400">&</span>
+                      <span className="text-medical-blue">{CLINIC_DETAILS.timings.evening}</span>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1074,7 +1231,7 @@ export default function App() {
       </main>
 
       <Footer setActivePage={setActivePage} />
-      <WhatsAppButton />
+      <FloatingContactWidget />
       <StickyCTA openModal={() => setIsModalOpen(true)} />
       <BookingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>

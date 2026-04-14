@@ -851,10 +851,7 @@ const DoctorPage = () => {
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/60 to-transparent text-white">
-                    <p className="text-sm font-medium opacity-80 mb-1 uppercase tracking-wider">Registration No.</p>
-                    <p className="text-xl font-bold">{CLINIC_DETAILS.regNo}</p>
-                  </div>
+                  {/* Registration Number removed from here for cleaner look */}
                 </div>
               </div>
 
@@ -894,7 +891,12 @@ const DoctorPage = () => {
             >
               <div>
                 <h2 className="text-5xl font-bold text-gray-900 mb-2">{CLINIC_DETAILS.doctorName}</h2>
-                <p className="text-xl text-medical-blue font-medium mb-6">{CLINIC_DETAILS.qualification}</p>
+                <div className="flex flex-wrap items-center gap-4 mb-6">
+                  <p className="text-xl text-medical-blue font-medium">{CLINIC_DETAILS.qualification}</p>
+                  <span className="px-3 py-1 bg-medical-light text-medical-blue text-[10px] font-bold rounded-full border border-medical-blue/20 uppercase tracking-wider">
+                    Reg No: {CLINIC_DETAILS.regNo}
+                  </span>
+                </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[

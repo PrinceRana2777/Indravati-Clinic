@@ -15,6 +15,7 @@ import {
   HeartPulse, 
   UserRound, 
   ChevronRight, 
+  ChevronLeft,
   Menu, 
   X, 
   Star,
@@ -416,15 +417,17 @@ const HomePage = ({ setActivePage }: { setActivePage: (p: string) => void }) => 
   return (
     <div className="overflow-hidden">
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center">
+      <section className="relative min-h-screen flex items-center justify-center pt-20 pb-32 lg:pb-48">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1920" 
             alt="Clinic Interior" 
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-center"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-medical-blue/90 to-blue-900/40"></div>
+          {/* Softer, more balanced overlay */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-medical-blue/70 via-medical-blue/40 to-black/30"></div>
+          <div className="absolute inset-0 bg-black/20"></div>
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 text-center text-white">
@@ -432,26 +435,27 @@ const HomePage = ({ setActivePage }: { setActivePage: (p: string) => void }) => 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            className="mb-12"
           >
-            <span className="inline-block px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-sm font-semibold mb-6">
+            <span className="inline-block px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-sm font-semibold mb-8 border border-white/10">
               Trusted Healthcare in Naigaon East
             </span>
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+            <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-[1.1] tracking-tight">
               Your Health is Our <br /> <span className="text-blue-300">Top Priority</span>
             </h1>
-            <p className="text-lg md:text-xl text-blue-50 max-w-2xl mx-auto mb-10 font-light">
+            <p className="text-lg md:text-xl text-blue-50 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
               Experience professional medical care with {CLINIC_DETAILS.doctorName}. We provide comprehensive treatments tailored to your needs.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <button 
                 onClick={() => setActivePage('contact')}
-                className="w-full sm:w-auto bg-white text-medical-blue px-10 py-4 rounded-full font-bold text-lg hover:bg-blue-50 transition-all shadow-xl"
+                className="w-full sm:w-auto bg-white text-medical-blue px-12 py-4 rounded-full font-bold text-lg hover:bg-blue-50 transition-all shadow-2xl hover:scale-105 active:scale-95"
               >
                 Book Appointment
               </button>
               <button 
                 onClick={() => setActivePage('services')}
-                className="w-full sm:w-auto bg-transparent border-2 border-white/30 backdrop-blur-sm text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition-all"
+                className="w-full sm:w-auto bg-transparent border-2 border-white/40 backdrop-blur-md text-white px-12 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition-all hover:scale-105 active:scale-95"
               >
                 Our Services
               </button>
@@ -460,7 +464,7 @@ const HomePage = ({ setActivePage }: { setActivePage: (p: string) => void }) => 
         </div>
 
         {/* Floating Highlights */}
-        <div className="absolute bottom-10 left-0 w-full hidden lg:block">
+        <div className="absolute bottom-12 left-0 w-full hidden lg:block">
           <div className="max-w-7xl mx-auto px-4 grid grid-cols-3 gap-8">
             {[
               { icon: Award, title: "Experienced Doctor", desc: "Expert care by Dr. O.P. Yadav" },
@@ -613,16 +617,40 @@ const HomePage = ({ setActivePage }: { setActivePage: (p: string) => void }) => 
 
 const ImageSlider = ({ images }: { images: string[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const handleManualAction = (action: () => void) => {
+    action();
+    setIsAutoPlaying(false);
+    // Resume auto-playing after 5 seconds of inactivity
+    if (autoPlayRef.current) clearTimeout(autoPlayRef.current);
+    autoPlayRef.current = setTimeout(() => {
+      setIsAutoPlaying(true);
+    }, 5000);
+  };
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [images.length]);
+    let interval: NodeJS.Timeout;
+    if (isAutoPlaying) {
+      interval = setInterval(nextSlide, 4000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+      if (autoPlayRef.current) clearTimeout(autoPlayRef.current);
+    };
+  }, [isAutoPlaying, images.length]);
 
   return (
-    <div className="relative w-full h-full group">
+    <div className="relative w-full h-full group overflow-hidden">
       <AnimatePresence mode="wait">
         <motion.img
           key={currentIndex}
@@ -635,22 +663,43 @@ const ImageSlider = ({ images }: { images: string[] }) => {
           referrerPolicy="no-referrer"
         />
       </AnimatePresence>
+
+      {/* Manual Navigation Arrows */}
+      <div className="absolute inset-0 flex items-center justify-between px-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button
+          onClick={() => handleManualAction(prevSlide)}
+          className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white flex items-center justify-center hover:bg-white/40 transition-all"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft size={24} />
+        </button>
+        <button
+          onClick={() => handleManualAction(nextSlide)}
+          className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white flex items-center justify-center hover:bg-white/40 transition-all"
+          aria-label="Next slide"
+        >
+          <ChevronRight size={24} />
+        </button>
+      </div>
       
       {/* Navigation Dots */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2.5 z-20">
         {images.map((_, i) => (
           <button
             key={i}
-            onClick={() => setCurrentIndex(i)}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              i === currentIndex ? 'bg-white w-6' : 'bg-white/50'
+            onClick={() => handleManualAction(() => setCurrentIndex(i))}
+            className={`h-2 rounded-full transition-all duration-500 ${
+              i === currentIndex 
+                ? 'bg-white w-8 shadow-lg' 
+                : 'bg-white/40 w-2 hover:bg-white/60'
             }`}
+            aria-label={`Go to slide ${i + 1}`}
           />
         ))}
       </div>
 
       {/* Overlay Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
     </div>
   );
 };

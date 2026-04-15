@@ -9,7 +9,7 @@ export const CLINIC_DETAILS = {
   address: "D2/8, Kini, Indravati Clinic, Seven Square Academy School",
   timings: {
     morning: "10:00 AM – 1:30 PM",
-    evening: "6:00 PM – 10:30 PM"
+    evening: "6:00 PM – 10:00 PM"
   },
   whatsapp: "919029403531",
   consultationFee: "₹100 – ₹200"
@@ -18,7 +18,7 @@ export const CLINIC_DETAILS = {
 export const SERVICES = [
   {
     id: "general",
-    title: "General Checkup",
+    title: "General Physician",
     icon: "Stethoscope",
     description: "Comprehensive health assessments for all age groups to monitor and maintain overall well-being.",
     benefits: ["Early detection of health issues", "Personalized health advice", "Routine blood pressure and sugar monitoring"],

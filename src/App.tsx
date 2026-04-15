@@ -391,7 +391,7 @@ const BookingModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => voi
                       >
                         <option value="">Time Slot</option>
                         <option value="morning">Morning (10:00 AM - 1:30 PM)</option>
-                        <option value="evening">Evening (6:00 PM - 10:30 PM)</option>
+                        <option value="evening">Evening (6:00 PM - 10:00 PM)</option>
                       </select>
                     </div>
                   </div>
@@ -514,7 +514,7 @@ const HomePage = ({ setActivePage }: { setActivePage: (p: string) => void }) => 
                   <h3 className="text-xl font-bold mb-2">{service.title}</h3>
                   <div className="flex items-center text-[10px] font-bold text-medical-teal uppercase tracking-wider mb-4">
                     <Clock size={12} className="mr-1" />
-                    Mon - Sat | 10:00 AM - 10:30 PM
+                    Mon - Sat | 10:00 AM - 10:00 PM
                   </div>
                   <p className="text-gray-600 text-sm mb-6 leading-relaxed">
                     {service.description}
@@ -774,10 +774,9 @@ const AboutPage = () => {
             <div className="absolute left-4 md:left-1/2 md:-translate-x-1/2 w-1 h-full bg-blue-200 rounded-full"></div>
             
             {[
-              { year: "2008", title: "The Beginning", desc: "Dr. O.P. Yadav started his medical practice with a small clinic." },
+              { year: "2011", title: "The Beginning", desc: "Dr. O.P. Yadav started his medical practice initially working in hospitals." },
               { year: "2012", title: "Expansion", desc: "Moved to a larger facility to accommodate more patients." },
-              { year: "2018", title: "Modernization", desc: "Integrated advanced diagnostic tools and emergency care." },
-              { year: "2024", title: "Digital Era", desc: "Launched online appointment booking and digital records." }
+              { year: "2018", title: "Modernization", desc: "Integrated advanced diagnostic tools and emergency care." }
             ].map((item, i) => (
               <div key={i} className={`relative flex items-center mb-12 md:mb-16 pl-12 md:pl-0 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
                 <div className="w-full md:w-1/2 md:px-8">
@@ -846,7 +845,7 @@ const DoctorPage = () => {
                 <div className="absolute -inset-4 bg-medical-blue/5 rounded-[3rem] blur-2xl group-hover:bg-medical-blue/10 transition-colors duration-500" />
                 <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white">
                   <img 
-                    src="https://iili.io/BGXaQ5l.md.png" 
+                    src="https://iili.io/Be3bXKg.md.png" 
                     alt="Dr. O.P. Yadav" 
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     referrerPolicy="no-referrer"
@@ -1198,7 +1197,7 @@ const ContactPage = () => {
                     >
                       <option value="">Select Time</option>
                       <option value="morning">Morning (10:00 AM - 1:30 PM)</option>
-                      <option value="evening">Evening (6:00 PM - 10:30 PM)</option>
+                      <option value="evening">Evening (6:00 PM - 10:00 PM)</option>
                     </select>
                   </div>
                 </div>
